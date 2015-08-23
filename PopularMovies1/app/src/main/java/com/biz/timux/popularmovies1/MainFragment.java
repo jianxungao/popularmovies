@@ -57,7 +57,8 @@ public class MainFragment extends Fragment {
         if(savedInstanceState == null || !savedInstanceState.containsKey("MyMovies")){
             mMoivesList = new ArrayList<MyMovie>();
         }else {
-            mMoivesList = MyMovieList.getMyMovies();
+            //mMoivesList = MyMovieList.getMyMovies();
+            mMoivesList = savedInstanceState.getParcelableArrayList("MyMovies");
         }
         Log.d(TAG, "onCreate() called");
     }
