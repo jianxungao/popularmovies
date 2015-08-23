@@ -1,7 +1,10 @@
 package com.biz.timux.popularmovies1;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -34,7 +37,7 @@ import java.util.ArrayList;
  */
 public class MainFragment extends Fragment {
 
-    private ArrayList<MyMovie> mMoivesList;
+    private ArrayList<MyMovie> mMoiveList;
     private static final String TAG = MainFragment.class.getSimpleName();
 
     private MovieAdapter mAdapter;
@@ -46,7 +49,7 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState){
-        outState.putParcelableArrayList("MyMovies", MyMovieList.getMyMovies());
+        outState.putParcelableArrayList("MyMovies", mMoiveList);
         super.onSaveInstanceState(outState);
     }
 
@@ -55,10 +58,9 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(R.string.movies_title);
         if(savedInstanceState == null || !savedInstanceState.containsKey("MyMovies")){
-            mMoivesList = new ArrayList<MyMovie>();
+            mMoiveList = new ArrayList<MyMovie>();
         }else {
-            //mMoivesList = MyMovieList.getMyMovies();
-            mMoivesList = savedInstanceState.getParcelableArrayList("MyMovies");
+            mMoiveList = savedInstanceState.getParcelableArrayList("MyMovies");
         }
         Log.d(TAG, "onCreate() called");
     }
@@ -67,7 +69,7 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mAdapter = new MovieAdapter(getActivity(), mMoivesList);
+        mAdapter = new MovieAdapter(getActivity(), mMoiveList);
 
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -80,7 +82,7 @@ public class MainFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 MyMovie myMovie = mAdapter.getItem(position);
                 Intent intent = new Intent(getActivity(),DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, myMovie.getId());
+                        .putExtra(Intent.EXTRA_TEXT, myMovie);
                 startActivity(intent);
             }
         });
@@ -147,7 +149,7 @@ public class MainFragment extends Fragment {
             JSONObject moviesJson = new JSONObject(moviesJsonStr);
             JSONArray moviesArray = moviesJson.getJSONArray(MV_RESULTS);
 
-            ArrayList<MyMovie> movieList = new ArrayList<MyMovie>();
+            mMoiveList = new ArrayList<MyMovie>();
 
             for (int i = 0; i < moviesArray.length(); i++) {
 
@@ -167,20 +169,14 @@ public class MainFragment extends Fragment {
                 //create a MyMovie object each time and put to an array list
                 MyMovie m = new MyMovie(id, title, popularity, vote_avg, releaseDate, description,
                         posterPath, backdropPath, video);
-                movieList.add(m);
-
+                mMoiveList.add(m);
             }
 
-            for (MyMovie s : movieList) {
+            for (MyMovie s : mMoiveList) {
                 Log.v(TAG, "Movie entry: " + s.getPath());
             }
 
-            //set the MyMovieList to hold the movie data for sharing between activities
-            MyMovieList myMovieList = MyMovieList.get(getActivity());
-            myMovieList.setMyMovies(movieList);
-
-            return movieList;
-
+            return mMoiveList;
         }
 
 

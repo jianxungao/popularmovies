@@ -1,9 +1,12 @@
 package com.biz.timux.popularmovies1;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by gaojianxun on 15/8/19.
  */
-public class MyMovie implements Parcelable{
+public class MyMovie implements Parcelable {
 
     private int id;
     private String title;
