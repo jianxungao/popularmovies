@@ -11,7 +11,7 @@ import java.util.UUID;
  */
 public class MyMovieList {
 
-    private ArrayList<MyMovie> mMyMovies;
+    private static ArrayList<MyMovie> mMyMovies;
 
     private static MyMovieList sMyMovieList;
     private Context mAppContext;

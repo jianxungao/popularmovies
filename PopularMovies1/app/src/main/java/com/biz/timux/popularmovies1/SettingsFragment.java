@@ -8,7 +8,7 @@ import android.preference.PreferenceManager;
 import android.preference.PreferenceFragment;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link PreferenceFragment} subclass.
  */
 public class SettingsFragment extends PreferenceFragment{
 

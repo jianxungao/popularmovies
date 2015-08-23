@@ -34,6 +34,7 @@ import java.util.ArrayList;
  */
 public class MainFragment extends Fragment {
 
+    private ArrayList<MyMovie> mMoivesList;
     private static final String TAG = MainFragment.class.getSimpleName();
 
     private MovieAdapter mAdapter;
@@ -43,11 +44,21 @@ public class MainFragment extends Fragment {
     public MainFragment() {
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        outState.putParcelableArrayList("MyMovies", MyMovieList.getMyMovies());
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(R.string.movies_title);
+        if(savedInstanceState == null || !savedInstanceState.containsKey("MyMovies")){
+            mMoivesList = new ArrayList<MyMovie>();
+        }else {
+            mMoivesList = MyMovieList.getMyMovies();
+        }
         Log.d(TAG, "onCreate() called");
     }
 
@@ -55,7 +66,7 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mAdapter = new MovieAdapter(getActivity(), new ArrayList<MyMovie>());
+        mAdapter = new MovieAdapter(getActivity(), mMoivesList);
 
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -77,7 +88,14 @@ public class MainFragment extends Fragment {
         return rootView;
     }
 
-
+    private boolean isNetworkAvailable(){
+        ConnectivityManager connectivityManager
+        = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        
+    }
+    
     private void updateMovie() {
 
         FetchMoviesTask uTask = new FetchMoviesTask();
@@ -93,7 +111,9 @@ public class MainFragment extends Fragment {
             mSortBy = "vote_average.desc";
             Log.v(TAG, "Sort by - - - " + mSortBy.toString());
         }
-        uTask.execute();
+        if (isNetworkAvailable()){
+            uTask.execute();
+        }
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.biz.timux.popularmovies1;
 /**
  * Created by gaojianxun on 15/8/19.
  */
-public class MyMovie {
+public class MyMovie implements Parcelable{
 
     private int id;
     private String title;
@@ -126,4 +126,49 @@ public class MyMovie {
     public String getBaseUrl() {
         return baseUrl;
     }
+    
+    public MyMovie(Parcel parcel){
+        id = parcel.readInt();
+        title = parcel.readString();
+        popularity = parcel.readDouble();
+        vote_avg = parcel.readDouble();
+        releaseDate = parcel.readString();
+        description = parcel.readString();
+        posterPath = parcel.readString();
+        backdropPath = parcel.readString();
+        video = parcel.readByte() != 0;
+        
+    }
+    
+    
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        
+        parcel.writeInt(id);
+        parcel.writeString(title);
+        parcel.writeDouble(popularity);
+        parcel.writeDouble(vote_avg);
+        parcel.writeString(releaseDate);
+        parcel.writeString(description);
+        parcel.writeString(posterPath);
+        parcel.writeString(backdropPath);
+        parcel.writeByte(((byte) (video ? 1 : 0)));
+        
+    }
+    
+    public static final Parcelable.Creator<MyMovie> CREATOR =
+        new Parcelable.Creator<MyMovie>() {
+            public MyMovie createFromParcel(Parcel parcel) {
+                return new MyMovie(parcel);
+            }
+
+            public MyMovie[] newArray(int i) {
+                return new MyMovie[i];
+            }
+        };
 }
