@@ -49,8 +49,8 @@ public class MainFragment extends Fragment {
     private static final String TAG = MainFragment.class.getSimpleName();
 
     private MovieAdapter mAdapter;
-    //default sort by value
-    private static String mSortBy = "popularity.desc";
+
+    private static String mSortBy;
 
     public MainFragment() {
     }
@@ -71,12 +71,15 @@ public class MainFragment extends Fragment {
             mMoiveList = savedInstanceState.getParcelableArrayList("MyMovies");
         }
 
+
         getOnlineResource();
 
         Log.d(TAG, "onCreate() called");
     }
 
     private void getOnlineResource(){
+
+
         RequestQueue queue = Volley.newRequestQueue(getActivity());
 
         String keyValue = "";
@@ -84,7 +87,11 @@ public class MainFragment extends Fragment {
                 "http://api.themoviedb.org/3/discover/movie?";
         final String SORT_BY = "sort_by";
         final String API_KEY = "api_key";
-
+        mSortBy = getSortBy();
+        if (mSortBy == null){
+            mSortBy = "popularity.desc";
+            Log.d(TAG, "Sorting value :  " + mSortBy);
+        }
 
         Uri builtUri = Uri.parse(BASE_URL).buildUpon()
                 .appendQueryParameter(SORT_BY, mSortBy)
@@ -107,6 +114,11 @@ public class MainFragment extends Fragment {
                                 for (MyMovie s : mMoiveList) {
                                     Log.d(TAG, "Movie entry: " + s.getTitle() + " - " + s.getId());
                                 }
+                                mAdapter.clear();
+                                for (MyMovie m : mMoiveList) {
+                                    mAdapter.add(m);
+                                }
+                            } else {
                                 mAdapter = new MovieAdapter(getActivity(), mMoiveList);
                             }
                         } catch (JSONException e) {
@@ -132,6 +144,12 @@ public class MainFragment extends Fragment {
 
         mAdapter = new MovieAdapter(getActivity(), mMoiveList);
 
+        if (mMoiveList != null) {
+            for (MyMovie s : mMoiveList) {
+                Log.d(TAG, "Movie entry: onCreateView Method " + s.getTitle());
+            }
+        }
+
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
 
@@ -153,36 +171,35 @@ public class MainFragment extends Fragment {
     }
 
 
-
-    private void updateMovie() {
-
+    // To get the movie sorting preference
+    public String getSortBy() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sort_by = prefs.getString(
                 getString(R.string.pref_sort_by_key),
                 getString(R.string.pref_sort_by_popularity));
         if (sort_by.equals("popularity")) {
             mSortBy = "popularity.desc";
-            Log.v(TAG, "Sort by - - -" + mSortBy.toString());
+            Log.v(TAG, "Sort by - - -" + mSortBy);
 
         } else if (sort_by.equals("highest_rated")) {
             mSortBy = "vote_average.desc";
-            Log.v(TAG, "Sort by - - - " + mSortBy.toString());
+            Log.v(TAG, "Sort by - - - " + mSortBy);
         }
-
+        return mSortBy;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        updateMovie();
+        mSortBy = getSortBy();
+        //mAdapter.setNotifyOnChange(true);
+        Log.d(TAG, "onResume called and Sorting by -  " + mSortBy);
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        updateMovie();
     }
-
 
 
     private ArrayList<MyMovie> getMovieDataFromJson(String moviesJsonStr)
