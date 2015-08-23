@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -17,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 
 import android.widget.GridView;
+import android.widget.Toast;
 
 
 import com.android.volley.Request;
@@ -30,14 +30,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+
 import java.util.ArrayList;
-import java.util.Arrays;
+
 
 
 /**
@@ -71,10 +66,22 @@ public class MainFragment extends Fragment {
             mMoiveList = savedInstanceState.getParcelableArrayList("MyMovies");
         }
 
-
-        getOnlineResource();
-
+        if (isNetworkAvailable()){
+            getOnlineResource();
+        }else {
+            Toast.makeText(getActivity(), "Please check your network connections!",
+                    Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "Network problems!");
+        }
         Log.d(TAG, "onCreate() called");
+    }
+
+    private boolean isNetworkAvailable(){
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+
     }
 
     private void getOnlineResource(){
