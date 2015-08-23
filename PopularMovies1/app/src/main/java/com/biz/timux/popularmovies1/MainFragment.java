@@ -50,7 +50,7 @@ public class MainFragment extends Fragment {
 
     private MovieAdapter mAdapter;
     //default sort by value
-    private String mSortBy = "popularity.desc";
+    private static String mSortBy = "popularity.desc";
 
     public MainFragment() {
     }
@@ -71,13 +71,15 @@ public class MainFragment extends Fragment {
             mMoiveList = savedInstanceState.getParcelableArrayList("MyMovies");
         }
 
+        getOnlineResource();
 
+        Log.d(TAG, "onCreate() called");
+    }
+
+    private void getOnlineResource(){
         RequestQueue queue = Volley.newRequestQueue(getActivity());
-       /* String url =
-                "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=5f781f14a22dd8dc12423a79603e3e1f";*/
 
-        String sortBy = "popularity.desc";
-        String keyValue = "5f781f14a22dd8dc12423a79603e3e1f";
+        String keyValue = "";
         final String BASE_URL =
                 "http://api.themoviedb.org/3/discover/movie?";
         final String SORT_BY = "sort_by";
@@ -85,7 +87,7 @@ public class MainFragment extends Fragment {
 
 
         Uri builtUri = Uri.parse(BASE_URL).buildUpon()
-                .appendQueryParameter(SORT_BY, sortBy)
+                .appendQueryParameter(SORT_BY, mSortBy)
                 .appendQueryParameter(API_KEY, keyValue)
                 .build();
 
@@ -99,20 +101,14 @@ public class MainFragment extends Fragment {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-
-                        //textView.setText("Response => " + response.toString());
-                        //rootView.findViewById(R.id.progressBar1).setVisibility(View.GONE);
                         try {
-                            //String[] moviesList = getMovieDataFromJson(response.toString());
                             mMoiveList = getMovieDataFromJson(response.toString());
                             if (mMoiveList != null) {
                                 for (MyMovie s : mMoiveList) {
-                                    Log.v(TAG, "Movie entry: " + s.getTitle() + " - " + s.getId());
+                                    Log.d(TAG, "Movie entry: " + s.getTitle() + " - " + s.getId());
                                 }
                                 mAdapter = new MovieAdapter(getActivity(), mMoiveList);
                             }
-
-
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -122,12 +118,12 @@ public class MainFragment extends Fragment {
                     @Override
                     public void onErrorResponse(VolleyError error) {
 
-                        Log.v("Error", error.toString());
+                        Log.d("Error", error.toString());
                     }
                 });
 
         queue.add(jsObjRequest);
-        Log.d(TAG, "onCreate() called");
+
     }
 
     @Override
@@ -156,17 +152,10 @@ public class MainFragment extends Fragment {
         return rootView;
     }
 
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 
-    }
 
     private void updateMovie() {
 
-        //FetchMoviesTask uTask = new FetchMoviesTask();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String sort_by = prefs.getString(
                 getString(R.string.pref_sort_by_key),
@@ -179,16 +168,21 @@ public class MainFragment extends Fragment {
             mSortBy = "vote_average.desc";
             Log.v(TAG, "Sort by - - - " + mSortBy.toString());
         }
-        if (isNetworkAvailable()) {
-            //uTask.execute();
-        }
+
     }
 
     @Override
-    public void onStart() {
+    public void onResume() {
+        super.onResume();
+        updateMovie();
+    }
+
+    @Override
+    public void onStart(){
         super.onStart();
         updateMovie();
     }
+
 
 
     private ArrayList<MyMovie> getMovieDataFromJson(String moviesJsonStr)
