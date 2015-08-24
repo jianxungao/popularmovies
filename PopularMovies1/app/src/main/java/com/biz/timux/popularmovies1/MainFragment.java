@@ -118,12 +118,10 @@ public class MainFragment extends Fragment {
                         try {
                             mMoiveList = getMovieDataFromJson(response.toString());
                             if (mMoiveList != null) {
-                                for (MyMovie s : mMoiveList) {
-                                    Log.d(TAG, "Movie entry: " + s.getTitle() + " - " + s.getId());
-                                }
                                 mAdapter.clear();
                                 for (MyMovie m : mMoiveList) {
                                     mAdapter.add(m);
+                                    Log.d(TAG, "Movie entry: " + m.getTitle() + " - " + m.getId());
                                 }
                             } else {
                                 mAdapter = new MovieAdapter(getActivity(), mMoiveList);

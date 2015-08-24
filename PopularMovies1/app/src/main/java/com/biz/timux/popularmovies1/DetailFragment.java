@@ -41,7 +41,7 @@ public class DetailFragment extends Fragment {
 
         ImageView movieIcon = (ImageView)rootView.findViewById(R.id.movie_imgIcon);
         Picasso.with(getContext()).load(mMyMovie.getIconPath()).into(movieIcon);
-        Log.d(TAG, "m.getIconPath() is called :" + mMyMovie.getIconPath().toString());
+        Log.d(TAG, "m.getIconPath() is called :" + mMyMovie.getIconPath());
 
         TextView movieYear = (TextView)rootView.findViewById(R.id.movie_release_year);
         movieYear.setText(Utility.getYear(mMyMovie.getReleaseDate()));
