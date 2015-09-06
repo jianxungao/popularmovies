@@ -40,30 +40,32 @@ import java.util.ArrayList;
  */
 public class MainFragment extends Fragment {
 
-    private ArrayList<MyMovie> mMoiveList;
+    private ArrayList<MyMovie> mMovieList;
     private static final String TAG = MainFragment.class.getSimpleName();
 
     private MovieAdapter mAdapter;
 
-    private static String mSortBy;
+    private static String sSortBy;
 
     public MainFragment() {
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList("MyMovies", mMoiveList);
+        outState.putParcelableArrayList("MyMovies", mMovieList);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         getActivity().setTitle(R.string.movies_title);
+
         if (savedInstanceState == null || !savedInstanceState.containsKey("MyMovies")) {
-            mMoiveList = new ArrayList<MyMovie>();
+            mMovieList = new ArrayList<MyMovie>();
         } else {
-            mMoiveList = savedInstanceState.getParcelableArrayList("MyMovies");
+            mMovieList = savedInstanceState.getParcelableArrayList("MyMovies");
         }
 
         if (isNetworkAvailable()){
@@ -86,22 +88,21 @@ public class MainFragment extends Fragment {
 
     private void getOnlineResource(){
 
-
         RequestQueue queue = Volley.newRequestQueue(getActivity());
 
-        String keyValue = "";
+        String keyValue = "5f781f14a22dd8dc12423a79603e3e1f";
         final String BASE_URL =
                 "http://api.themoviedb.org/3/discover/movie?";
         final String SORT_BY = "sort_by";
         final String API_KEY = "api_key";
-        mSortBy = getSortBy();
-        if (mSortBy == null){
-            mSortBy = "popularity.desc";
-            Log.d(TAG, "Sorting value :  " + mSortBy);
+        sSortBy = getSortBy();
+        if (sSortBy == null){
+            sSortBy = "popularity.desc";
+            Log.d(TAG, "Sorting value :  " + sSortBy);
         }
 
         Uri builtUri = Uri.parse(BASE_URL).buildUpon()
-                .appendQueryParameter(SORT_BY, mSortBy)
+                .appendQueryParameter(SORT_BY, sSortBy)
                 .appendQueryParameter(API_KEY, keyValue)
                 .build();
 
@@ -116,15 +117,15 @@ public class MainFragment extends Fragment {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            mMoiveList = getMovieDataFromJson(response.toString());
-                            if (mMoiveList != null) {
+                            mMovieList = getMovieDataFromJson(response.toString());
+                            if (mMovieList != null) {
                                 mAdapter.clear();
-                                for (MyMovie m : mMoiveList) {
+                                for (MyMovie m : mMovieList) {
                                     mAdapter.add(m);
                                     Log.d(TAG, "Movie entry: " + m.getTitle() + " - " + m.getId());
                                 }
                             } else {
-                                mAdapter = new MovieAdapter(getActivity(), mMoiveList);
+                                mAdapter = new MovieAdapter(getActivity(), mMovieList);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -147,10 +148,10 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        mAdapter = new MovieAdapter(getActivity(), mMoiveList);
+        mAdapter = new MovieAdapter(getActivity(), mMovieList);
 
-        if (mMoiveList != null) {
-            for (MyMovie s : mMoiveList) {
+        if (mMovieList != null) {
+            for (MyMovie s : mMovieList) {
                 Log.d(TAG, "Movie entry: onCreateView Method " + s.getTitle());
             }
         }
@@ -183,28 +184,30 @@ public class MainFragment extends Fragment {
                 getString(R.string.pref_sort_by_key),
                 getString(R.string.pref_sort_by_popularity));
         if (sort_by.equals("popularity")) {
-            mSortBy = "popularity.desc";
-            Log.v(TAG, "Sort by - - -" + mSortBy);
+            sSortBy = "popularity.desc";
+            Log.v(TAG, "Sort by - - -" + sSortBy);
 
         } else if (sort_by.equals("highest_rated")) {
-            mSortBy = "vote_average.desc";
-            Log.v(TAG, "Sort by - - - " + mSortBy);
+            sSortBy = "vote_average.desc";
+            Log.v(TAG, "Sort by - - - " + sSortBy);
         }
-        return mSortBy;
+        return sSortBy;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mSortBy = getSortBy();
+        sSortBy = getSortBy();
         //mAdapter.setNotifyOnChange(true);
-        Log.d(TAG, "onResume called and Sorting by -  " + mSortBy);
+        Log.d(TAG, "onResume called and Sorting by -  " + sSortBy);
     }
 
     @Override
     public void onStart(){
         super.onStart();
     }
+
+
 
 
     private ArrayList<MyMovie> getMovieDataFromJson(String moviesJsonStr)
@@ -225,7 +228,7 @@ public class MainFragment extends Fragment {
         JSONObject moviesJson = new JSONObject(moviesJsonStr);
         JSONArray moviesArray = moviesJson.getJSONArray(MV_RESULTS);
 
-        mMoiveList = new ArrayList<MyMovie>();
+        mMovieList = new ArrayList<MyMovie>();
 
         for (int i = 0; i < moviesArray.length(); i++) {
 
@@ -245,14 +248,14 @@ public class MainFragment extends Fragment {
             //create a MyMovie object each time and put to an array list
             MyMovie m = new MyMovie(id, title, popularity, vote_avg, releaseDate, description,
                     posterPath, backdropPath, video);
-            mMoiveList.add(m);
+            mMovieList.add(m);
         }
 
-        for (MyMovie s : mMoiveList) {
+        for (MyMovie s : mMovieList) {
             Log.v(TAG, "Movie entry: " + s.getPath());
         }
 
-        return mMoiveList;
+        return mMovieList;
     }
 
 

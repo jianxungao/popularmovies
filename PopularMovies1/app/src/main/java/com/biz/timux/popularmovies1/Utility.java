@@ -14,7 +14,7 @@ public class Utility {
         return year;
     }
 
-    public static String getVote(Double vote){
+    public static String getVote(double vote){
         String moveVote = Double.toString(vote);
         return moveVote+"/10";
     }

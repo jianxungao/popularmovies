@@ -14,6 +14,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
+    // Called after onCreate has finished, use to restore UI state
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore UI state from the savedInstanceState.
+        // This bundle has also been passed to onCreate.
+        // Will only be called if the Activity has been
+        // killed by the system since it was last visible.
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
