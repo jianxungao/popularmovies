@@ -35,6 +35,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.biz.timux.popularmovies1.MainActivity" />
         </activity>
+
+        <provider
+            android:authorities="com.biz.timux.popularmovies1"
+            android:name=".data.MovieProvider" />
+
     </application>
 
 </manifest>

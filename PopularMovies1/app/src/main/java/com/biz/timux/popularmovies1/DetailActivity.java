@@ -13,6 +13,7 @@ import java.util.UUID;
 public class DetailActivity extends AppCompatActivity {
     private static final String TAG = DetailActivity.class.getSimpleName();
 
+    public static final String MOVIE_KEY = "movie_id";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
