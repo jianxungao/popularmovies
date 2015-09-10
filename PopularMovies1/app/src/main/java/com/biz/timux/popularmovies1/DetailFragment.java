@@ -28,7 +28,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public static final String MOVIE_KEY = "movie_id";
     private static final String MOVIE_SORT_KEY = "sort";
     private String mSort;
-    private final String baseUrl = "https://image.tmdb.org/t/p/w185";
 
     private static final int DETAIL_LOADER = 0;
 
@@ -53,6 +52,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public static final int COL_MOVIE_POSTER_PATH = 5;
     public static final int COL_MOVIE_VOTE_AVG = 8;
     public static final int COL_MOVIE_POP = 7;
+    private int mMovieId;
 
     public DetailFragment() {
     }
@@ -75,6 +75,16 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            mMovieId = arguments.getInt(DetailActivity.MOVIE_KEY);
+        }
+
+        /*if (savedInstanceState != null) {
+            mLocation = savedInstanceState.getString(LOCATION_KEY);
+        }*/
+        
         return inflater.inflate(R.layout.fragment_detail, container, false);
     }
 
@@ -82,27 +92,31 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+        //getLoaderManager().initLoader(DETAIL_LOADER, null, this);
         if (savedInstanceState != null) {
             mSort = savedInstanceState.getString(MOVIE_SORT_KEY);
         }
         super.onActivityCreated(savedInstanceState);
+
+        Bundle arguments = getArguments();
+        if (arguments != null && arguments.containsKey(DetailActivity.MOVIE_KEY)) {
+            getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+        }
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.v(TAG, "In onCreateLoader");
-        Intent intent = getActivity().getIntent();
+        /*Intent intent = getActivity().getIntent();
         if (intent == null || !intent.hasExtra(MOVIE_KEY)) {
             return null;
         }
-        int movieId = intent.getIntExtra(MOVIE_KEY, 0);
-        Log.d(TAG, "-- movie id --" + movieId);
-        // Sort order:  Ascending, by date.
-        //String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATETEXT + " ASC";
+        int movieId = intent.getIntExtra(MOVIE_KEY, 0);*/
+        Log.d(TAG, "-- movie id --" + mMovieId);
 
-        mSort = Utility.getPreferredSortBy(getActivity());
-        Uri movieByIdUri = MovieEntry.buildMovieIdUri(movieId);
+
+        //mSort = Utility.getPreferredSortBy(getActivity());
+        Uri movieByIdUri = MovieEntry.buildMovieIdUri(mMovieId);
         Log.d(TAG, movieByIdUri.toString());
 
         // Now create and return a CursorLoader that will take care of
@@ -136,10 +150,10 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         ((TextView) getView().findViewById(R.id.movie_duration))
                 .setText(Utility.getDuration());
 
-        String movieVote =
-                data.getString(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_VOTE));
+        double movieVote =
+                data.getDouble(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_VOTE));
         ((TextView) getView().findViewById(R.id.movie_vote))
-                .setText(movieVote);
+                .setText(Utility.getVote(movieVote));
 
 
         String movieYear =
@@ -152,8 +166,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                 data.getString(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_BACKDROP_PATH));
 
         ImageView iconView = (ImageView) getView().findViewById(R.id.movie_imgIcon);
-        Picasso.with(getContext()).load(baseUrl + icons).into(iconView);
-        Log.d(TAG, "Picasso load() is called :" + baseUrl+icons);
+        Picasso.with(getContext()).load(Utility.sBaseUrl + icons).into(iconView);
+        Log.d(TAG, "Picasso load() is called :" + Utility.sBaseUrl+icons);
 
 
 
@@ -163,5 +177,6 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) { }
+
 
 }

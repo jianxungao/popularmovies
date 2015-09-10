@@ -10,6 +10,9 @@ import android.support.v4.app.FragmentActivity;
  * Help functions
  */
 public class Utility {
+
+    public static final String sBaseUrl = "https://image.tmdb.org/t/p/w185";
+
     public static String getYear(String releaseDate){
         String year = "2015";
         int i = releaseDate.indexOf('-');

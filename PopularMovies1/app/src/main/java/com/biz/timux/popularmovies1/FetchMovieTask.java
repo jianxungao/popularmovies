@@ -146,7 +146,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             mContext.getContentResolver().bulkInsert(MovieEntry.CONTENT_URI, cvArray);
         }
 
-        if (DEBUG) {
+        /*if (DEBUG) {
             Cursor movieCursor = mContext.getContentResolver().query(
                     MovieEntry.CONTENT_URI,
                     null,
@@ -167,7 +167,7 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
             }
 
             movieCursor.close();
-        }
+        }*/
     }
 
     @Override
@@ -176,9 +176,10 @@ public class FetchMovieTask extends AsyncTask<String, Void, Void> {
         if (params.length == 0) {
             return null;
         }
-        //String sortBy = params[0];
 
-        String sortBy = "popularity.desc";
+        String sortBy = params[0];
+
+        //String sortBy = "popularity.desc";
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
 

@@ -6,18 +6,36 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.UUID;
 
 public class DetailActivity extends AppCompatActivity {
+
     private static final String TAG = DetailActivity.class.getSimpleName();
 
     public static final String MOVIE_KEY = "movie_id";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
+
+        if (savedInstanceState == null) {
+            // Create the detail fragment and add it to the activity
+            // using a fragment transaction.
+            int movieId = getIntent().getIntExtra(MOVIE_KEY, 0);
+
+            Bundle arguments = new Bundle();
+            arguments.putInt(DetailActivity.MOVIE_KEY, movieId);
+
+            DetailFragment fragment = new DetailFragment();
+            fragment.setArguments(arguments);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_detail, fragment)
+                    .commit();
+        }
 
         Log.d(TAG, "onCreate() called");
     }
@@ -46,5 +64,10 @@ public class DetailActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onFavoriteButtonClicked(View view) {
+        Log.d(TAG, "--button clicked--");
+
     }
 }

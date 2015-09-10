@@ -1,27 +1,26 @@
 package com.biz.timux.popularmovies1;
 
-import android.app.Activity;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
-import android.widget.TextView;
+
 
 import com.squareup.picasso.Picasso;
 
-import java.util.List;
+
 
 /**
  * Created by gaojianxun on 15/8/19.
  */
 public class MovieAdapter extends CursorAdapter {
 
-    private final String baseUrl = "https://image.tmdb.org/t/p/w185";
 
     private static final String TAG = MovieAdapter.class.getSimpleName();
 
@@ -42,8 +41,8 @@ public class MovieAdapter extends CursorAdapter {
         Log.d(TAG, "Cursor.getString is called :" + icons);
 
         ImageView iconView = (ImageView)view.findViewById(R.id.movie_image);
-        Picasso.with(context).load(baseUrl + icons).into(iconView);
-        Log.d(TAG, "Picasso load() is called :" + baseUrl+icons);
+        Picasso.with(context).load(Utility.sBaseUrl + icons).into(iconView);
+        Log.d(TAG, "Picasso load() is called :" + Utility.sBaseUrl+icons);
 
 
     }

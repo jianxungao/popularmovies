@@ -9,7 +9,8 @@
     android:horizontalSpacing="0dp"
     android:stretchMode="columnWidth"
     tools:context=".MainActivityFragment"
-    android:id="@+id/movie_grid"/>
+    android:id="@+id/movie_grid"
+    style="@style/MovieListStyle"/>
 
 
 
