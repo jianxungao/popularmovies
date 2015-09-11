@@ -12,7 +12,7 @@ import com.biz.timux.popularmovies1.data.MovieContract.MyFavMovieEntry;
 public class MovieDbHelper extends SQLiteOpenHelper {
 
 
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public static final String DATABASE_NAME = "movie.db";
 
@@ -38,7 +38,8 @@ public class MovieDbHelper extends SQLiteOpenHelper {
                 MovieEntry.COLUMN_MOVIE_POPULARITY + " REAL NOT NULL, " +
                 MovieEntry.COLUMN_MOVIE_VOTE + " REAL NOT NULL, " +
 
-                MovieEntry.COLUMN_MOVIE_HAS_VIDEO + " INTEGER NOT NULL);";
+                MovieEntry.COLUMN_MOVIE_HAS_VIDEO + " INTEGER NOT NULL, " +
+                MovieEntry.COLUMN_SORT + " TEXT NOT NULL);";
 
 
 
@@ -57,7 +58,7 @@ public class MovieDbHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + MovieEntry.TABLE_NAME);
         // persistent the user data
-        //db.execSQL("DROP TABLE IF EXISTS " + MyFavMovieEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + MyFavMovieEntry.TABLE_NAME);
         onCreate(db);
     }
 

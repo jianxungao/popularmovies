@@ -124,8 +124,8 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter{
             movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_BACKDROP_PATH, backdropPath);
             movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH, posterPath);
             movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_HAS_VIDEO, video);
-
-            cVVector.add(movieValues);
+            movieValues.put(MovieContract.MovieEntry.COLUMN_SORT, sort);
+                    cVVector.add(movieValues);
         }
 
 

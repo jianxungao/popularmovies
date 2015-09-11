@@ -59,7 +59,8 @@ public class MovieContract {
         }
 
         public static Uri buildMovieIdUri(int movieId) {
-            return CONTENT_URI.buildUpon().appendPath(String.valueOf(movieId)).build();
+            return CONTENT_URI.buildUpon()
+                    .appendQueryParameter(COLUMN_MOVIE_ID, String.valueOf(movieId)).build();
         }
 
         public static Uri buildMovieListSortedByPreferenceUri(String sort) {
@@ -68,7 +69,11 @@ public class MovieContract {
         }
 
         public static String getMovieIdFromUri(Uri uri) {
-            return uri.getPathSegments().get(1);
+            return uri.getQueryParameter(COLUMN_MOVIE_ID);
+        }
+
+        public static String getSortFromUri(Uri uri) {
+            return uri.getQueryParameter(COLUMN_SORT);
         }
 
 

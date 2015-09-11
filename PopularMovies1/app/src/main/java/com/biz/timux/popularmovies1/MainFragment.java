@@ -181,7 +181,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        Log.d(TAG, "---- inside Loader ----");
+        Log.d(TAG, "---- inside MainFragment Loader ----");
         // Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
         mSort = Utility.getPreferredSortBy(getActivity());

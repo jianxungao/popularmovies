@@ -7,7 +7,7 @@
     <string name="action_refresh">Refresh</string>
 
     <!-- Label for sort order preference -->
-    <string name="pref_sort_by_label">Sort By</string>
+    <string name="pref_sort_by_label">Please chose your favorite sorting</string>
 
     <!-- Label for Popularity option -->
     <string name="pref_sort_by_popularity_label">Popularity</string>
@@ -19,10 +19,10 @@
     <string name="pref_sort_by_key" translatable="false">sort_by</string>
 
     <!-- Value in SharedPreferences for popularity option  -->
-    <string name="pref_sort_by_popularity" translatable="false">popularity</string>
+    <string name="pref_sort_by_popularity" translatable="false">popularity.desc</string>
 
     <!-- Value in SharedPreferences for highest rate option  -->
-    <string name="pref_sort_by_highest_rated" translatable="false">highest_rated</string>
+    <string name="pref_sort_by_highest_rated" translatable="false">vote_average.desc</string>
 
 
     <!-- SyncAdapter related -->

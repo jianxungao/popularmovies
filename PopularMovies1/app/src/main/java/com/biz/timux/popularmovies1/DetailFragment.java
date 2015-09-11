@@ -26,8 +26,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private final String TAG = DetailFragment.class.getSimpleName();
     public static final String MOVIE_KEY = "movie_id";
-    private static final String MOVIE_SORT_KEY = "sort";
-    private String mSort;
+    //private static final String MOVIE_SORT_KEY = "sort";
+    //private String mSort;
 
     private static final int DETAIL_LOADER = 0;
 
@@ -57,17 +57,25 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public DetailFragment() {
     }
 
+    public static Fragment newInstance(int movieId) {
+        DetailFragment fragment = new DetailFragment();
+        Bundle args = new Bundle();
+        args.putInt(MOVIE_KEY, movieId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putString(MOVIE_SORT_KEY, mSort);
+        outState.putInt(MOVIE_KEY, mMovieId);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (mSort != null &&
-                !mSort.equals(Utility.getPreferredSortBy(getActivity()))) {
+        Bundle arguments = getArguments();
+        if (arguments != null && arguments.containsKey(DetailActivity.MOVIE_KEY)) {
             getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
         }
     }
@@ -94,7 +102,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onActivityCreated(Bundle savedInstanceState) {
         //getLoaderManager().initLoader(DETAIL_LOADER, null, this);
         if (savedInstanceState != null) {
-            mSort = savedInstanceState.getString(MOVIE_SORT_KEY);
+            mMovieId = savedInstanceState.getInt(MOVIE_KEY);
         }
         super.onActivityCreated(savedInstanceState);
 
@@ -106,7 +114,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.v(TAG, "In onCreateLoader");
+        Log.d(TAG, "\"---- inside DetailFragment Loader ----\"");
         /*Intent intent = getActivity().getIntent();
         if (intent == null || !intent.hasExtra(MOVIE_KEY)) {
             return null;
@@ -124,55 +132,64 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         return new CursorLoader(
                 getActivity(),
                 movieByIdUri,
-                null,
+                MOVIE_COLUMNS,
                 null,
                 null,
                 null
         );
+
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(TAG, "In onLoadFinished");
-        if (!data.moveToFirst()) { return; }
 
-        String movieTitle =
-                data.getString(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_TITLE));
-        ((TextView) getView().findViewById(R.id.movie_title))
-                .setText(movieTitle);
+        if (data != null && data.moveToFirst()) {
 
-        String movieDesc =
-                data.getString(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_DESC));
-        ((TextView) getView().findViewById(R.id.movie_overview))
-                .setText(movieDesc);
+            while (data.moveToNext()) {
+                int moiveId = data.getInt(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_ID));
 
+                if (mMovieId == moiveId) {
 
-        ((TextView) getView().findViewById(R.id.movie_duration))
-                .setText(Utility.getDuration());
+                    String movieTitle =
+                            data.getString(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_TITLE));
+                    ((TextView) getView().findViewById(R.id.movie_title))
+                            .setText(movieTitle);
 
-        double movieVote =
-                data.getDouble(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_VOTE));
-        ((TextView) getView().findViewById(R.id.movie_vote))
-                .setText(Utility.getVote(movieVote));
+                    String movieDesc =
+                            data.getString(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_DESC));
+                    ((TextView) getView().findViewById(R.id.movie_overview))
+                            .setText(movieDesc);
 
 
-        String movieYear =
-                data.getString(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_RELEASE_DATE));
-        ((TextView) getView().findViewById(R.id.movie_release_year))
-                .setText(Utility.getYear(movieYear));
+                    ((TextView) getView().findViewById(R.id.movie_duration))
+                            .setText(Utility.getDuration());
+
+                    double movieVote =
+                            data.getDouble(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_VOTE));
+                    ((TextView) getView().findViewById(R.id.movie_vote))
+                            .setText(Utility.getVote(movieVote));
 
 
-        String icons =
-                data.getString(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_BACKDROP_PATH));
-
-        ImageView iconView = (ImageView) getView().findViewById(R.id.movie_imgIcon);
-        Picasso.with(getContext()).load(Utility.sBaseUrl + icons).into(iconView);
-        Log.d(TAG, "Picasso load() is called :" + Utility.sBaseUrl+icons);
+                    String movieYear =
+                            data.getString(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_RELEASE_DATE));
+                    ((TextView) getView().findViewById(R.id.movie_release_year))
+                            .setText(Utility.getYear(movieYear));
 
 
+                    String icons =
+                            data.getString(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_BACKDROP_PATH));
 
-        Log.d(TAG, "Movie:  - " + movieTitle + " -  " + movieYear);
+                    ImageView iconView = (ImageView) getView().findViewById(R.id.movie_imgIcon);
+                    Picasso.with(getContext()).load(Utility.sBaseUrl + icons).into(iconView);
+                    Log.d(TAG, "Picasso load() is called :" + Utility.sBaseUrl + icons);
 
+
+                    Log.d(TAG, "Movie:  - " + movieTitle + " -  " + movieYear + " - ");
+                    break;
+                }
+            }
+        }
     }
 
     @Override

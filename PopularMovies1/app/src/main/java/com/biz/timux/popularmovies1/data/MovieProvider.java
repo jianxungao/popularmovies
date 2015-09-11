@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
+import com.biz.timux.popularmovies1.Utility;
 import com.biz.timux.popularmovies1.data.MovieContract.MovieEntry;
 import com.biz.timux.popularmovies1.data.MovieContract.MyFavMovieEntry;
 /**
@@ -18,6 +19,7 @@ public class MovieProvider extends ContentProvider {
 
     private static final int MOVIE = 100;
     private static final int MOVIE_ID = 101;
+    private static final int MOVIE_SORT = 102;
 
     private static final int MY_FAV_MOVIE = 300;
     private static final int MY_FAV_MOVIE_ID = 301;
@@ -75,7 +77,20 @@ public class MovieProvider extends ContentProvider {
         );
     }
 
+    /*private Cursor getMovieListSortByPreference(
+            Uri uri, String[] projection) {
 
+        String sort = MovieEntry.getSortFromUri(uri);
+
+        return sMovieSortedQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                projection,
+                sMovieSortedSelection,
+                new String[]{sort},
+                null,
+                null,
+                null
+        );
+    }*/
 
     @Override
     public boolean onCreate() {
@@ -91,6 +106,9 @@ public class MovieProvider extends ContentProvider {
         // Here's the switch statement that, given a URI, will determine what kind of request it is,
         // and query the database accordingly.
         Cursor retCursor;
+        //String sortBy = MovieEntry.getSortFromUri(uri);
+        String sortBy = Utility.getPreferredSortBy(getContext());
+        String movieId = MovieEntry.getMovieIdFromUri(uri);
 
         switch (sUriMatcher.match(uri)) {
 
@@ -99,8 +117,8 @@ public class MovieProvider extends ContentProvider {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         MovieEntry.TABLE_NAME,
                         projection,
-                        MovieEntry.COLUMN_MOVIE_ID + " = '" + ContentUris.parseId(uri) + "'",
-                        selectionArgs,
+                        sMovieIdSelection,
+                        new String[]{movieId},
                         null,
                         null,
                         sortOrder
@@ -109,11 +127,12 @@ public class MovieProvider extends ContentProvider {
 
             // movie
             case MOVIE:
+            case MOVIE_SORT:
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         MovieEntry.TABLE_NAME,
                         projection,
-                        selection,
-                        selectionArgs,
+                        sMovieSortedSelection,
+                        new String[]{sortBy},
                         null,
                         null,
                         sortOrder
@@ -167,6 +186,7 @@ public class MovieProvider extends ContentProvider {
             case MOVIE_ID:
                 return MovieEntry.CONTENT_ITEM_TYPE;
             case MOVIE:
+            case MOVIE_SORT:
                 return MovieEntry.CONTENT_TYPE;
             case MY_FAV_MOVIE_ID:
                 return MyFavMovieEntry.CONTENT_ITEM_TYPE;
@@ -213,10 +233,10 @@ public class MovieProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         int rowsDeleted;
         switch (match) {
-            case MOVIE:
+            /*case MOVIE:
                 rowsDeleted = db.delete(
                         MovieEntry.TABLE_NAME, selection, selectionArgs);
-                break;
+                break;*/
             case MY_FAV_MOVIE:
                 rowsDeleted = db.delete(
                         MyFavMovieEntry.TABLE_NAME, selection, selectionArgs);
@@ -239,10 +259,10 @@ public class MovieProvider extends ContentProvider {
         int rowsUpdated;
 
         switch (match) {
-            case MOVIE:
+            /*case MOVIE:
                 rowsUpdated = db.update(MovieEntry.TABLE_NAME, values, selection,
                         selectionArgs);
-                break;
+                break;*/
             case MY_FAV_MOVIE_ID:
                 rowsUpdated = db.update(MyFavMovieEntry.TABLE_NAME, values, selection,
                         selectionArgs);
@@ -290,7 +310,8 @@ public class MovieProvider extends ContentProvider {
         final String authority = MovieContract.CONTENT_AUTHORITY;
 
 
-        matcher.addURI(authority, MovieContract.PATH_MOVIE, MOVIE);
+        matcher.addURI(authority, MovieContract.PATH_MOVIE , MOVIE);
+        matcher.addURI(authority, MovieContract.PATH_MOVIE + "/*", MOVIE_SORT);
         matcher.addURI(authority, MovieContract.PATH_MOVIE + "/#", MOVIE_ID);
 
         matcher.addURI(authority, MovieContract.PATH_MOVIE_FAV, MY_FAV_MOVIE);
