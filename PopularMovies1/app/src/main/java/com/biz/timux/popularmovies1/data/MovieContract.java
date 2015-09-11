@@ -52,6 +52,8 @@ public class MovieContract {
         // video (boolean)
         public static final String COLUMN_MOVIE_HAS_VIDEO = "movie_video";
 
+        public static final String COLUMN_SORT = "sort_by";
+
         public static Uri buildMovieUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
@@ -60,9 +62,17 @@ public class MovieContract {
             return CONTENT_URI.buildUpon().appendPath(String.valueOf(movieId)).build();
         }
 
+        public static Uri buildMovieListSortedByPreferenceUri(String sort) {
+            return CONTENT_URI.buildUpon()
+                    .appendQueryParameter(COLUMN_SORT, sort).build();
+        }
+
         public static String getMovieIdFromUri(Uri uri) {
             return uri.getPathSegments().get(1);
         }
+
+
+
     }
 
     public static final class MyFavMovieEntry implements BaseColumns {

@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.biz.timux.popularmovies1.sync.MovieSyncAdapter;
+
 public class MainActivity extends AppCompatActivity implements MainFragment.Callback {
 
     private boolean mTwoPane;
@@ -33,11 +35,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
             mTwoPane = false;
         }
 
-        /*MainFragment movieFragment = ((MainFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_movie));
-
-        movieFragment.setUseTodayLayout(!mTwoPane);*/
-
+        MovieSyncAdapter.initializeSyncAdapter(this);
 
     }
 

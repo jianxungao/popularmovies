@@ -28,8 +28,7 @@ import android.widget.GridView;
 
 
 import com.biz.timux.popularmovies1.data.MovieContract.MovieEntry;
-
-
+import com.biz.timux.popularmovies1.sync.MovieSyncAdapter;
 
 
 /**
@@ -44,7 +43,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     private MovieAdapter mAdapter;
     private GridView mGridView;
 
-    private static String sSortBy;
+    private String mSort;
 
     private static final int MOVIE_LOADER = 0;
 
@@ -72,7 +71,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public static final int COL_MOVIE_POSTER_PATH = 5;
     public static final int COL_MOVIE_VOTE_AVG = 8;
     public static final int COL_MOVIE_POP = 7;
-    private String mSort;
+
 
 
     public MainFragment() {
@@ -160,26 +159,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     private void updateMovieList() {
-        mSort = Utility.getPreferredSortBy(getActivity());
-        new FetchMovieTask(getActivity()).execute(mSort);
-    }
-
-
-    // To get the movie sorting preference
-    public String getSortBy() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String sort_by = prefs.getString(
-                getString(R.string.pref_sort_by_key),
-                getString(R.string.pref_sort_by_popularity));
-        if (sort_by.equals("popularity")) {
-            sSortBy = "popularity.desc";
-            Log.v(TAG, "Sort by - - -" + sSortBy);
-
-        } else if (sort_by.equals("highest_rated")) {
-            sSortBy = "vote_average.desc";
-            Log.v(TAG, "Sort by - - - " + sSortBy);
-        }
-        return sSortBy;
+        MovieSyncAdapter.syncImmediately(getContext());
     }
 
     @Override
@@ -204,7 +184,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         Log.d(TAG, "---- inside Loader ----");
         // Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
-
+        mSort = Utility.getPreferredSortBy(getActivity());
+        Uri movieSortedByUri = MovieEntry.buildMovieListSortedByPreferenceUri(mSort);
         return new CursorLoader(
                 getActivity(),
                 MovieEntry.CONTENT_URI,

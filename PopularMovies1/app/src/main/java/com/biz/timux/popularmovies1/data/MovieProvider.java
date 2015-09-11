@@ -42,8 +42,12 @@ public class MovieProvider extends ContentProvider {
     }
 
     private static final String sMovieIdSelection =
-            MovieEntry.TABLE_NAME+
+            MovieEntry.TABLE_NAME +
                     "." + MovieEntry.COLUMN_MOVIE_ID + " = ? ";
+
+    private static final String sMovieSortedSelection =
+            MovieEntry.TABLE_NAME +
+                    "." + MovieEntry.COLUMN_SORT + " = ? ";
 
 
     private Cursor getMyFavMovie(Uri uri, String[] projection, String sortOrder) {

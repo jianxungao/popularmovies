@@ -25,4 +25,9 @@
     <string name="pref_sort_by_highest_rated" translatable="false">highest_rated</string>
 
 
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type">timux.bix.com</string>
+    <string name="content_authority">com.biz.timux.popularmovies1</string>
+
+
 </resources>
