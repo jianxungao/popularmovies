@@ -25,10 +25,13 @@ public class DetailActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            int movieId = getIntent().getIntExtra(MOVIE_KEY, 0);
+            //int movieId = getIntent().getIntExtra(MOVIE_KEY, 0);
+
+            //Bundle arguments = new Bundle();
+            //arguments.putInt(DetailActivity.MOVIE_KEY, movieId);
 
             Bundle arguments = new Bundle();
-            arguments.putInt(DetailActivity.MOVIE_KEY, movieId);
+            arguments.putParcelable(DetailFragment.DETAIL_URI, getIntent().getData());
 
             DetailFragment fragment = new DetailFragment();
             fragment.setArguments(arguments);

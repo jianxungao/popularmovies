@@ -27,6 +27,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 
+import com.biz.timux.popularmovies1.data.MovieContract;
 import com.biz.timux.popularmovies1.data.MovieContract.MovieEntry;
 import com.biz.timux.popularmovies1.sync.MovieSyncAdapter;
 
@@ -81,7 +82,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(int movieId);
+        public void onItemSelected(Uri movieUri);
     }
 
     @Override
@@ -121,7 +122,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        //updateMovieList();
+
         mAdapter = new MovieAdapter(getActivity(), null, 0);
 
 
@@ -137,7 +138,9 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 Cursor cursor = mAdapter.getCursor();
                 if (cursor != null && cursor.moveToPosition(position)) {
                     ((Callback) getActivity())
-                            .onItemSelected(cursor.getInt(COL_MOVIE_ID));
+                            .onItemSelected(MovieContract.MovieEntry.buildMovieIdUri(
+                                    cursor.getInt(COL_MOVIE_ID)
+                            ));
                 }
                 mPosition = position;
 
@@ -174,6 +177,12 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onStart(){
         super.onStart();
+    }
+
+    // since we read the sort pref when we create the loader, all we need to do is restart things
+    void onSortPreferenceChanged() {
+        updateMovieList();
+        getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
     }
 
 

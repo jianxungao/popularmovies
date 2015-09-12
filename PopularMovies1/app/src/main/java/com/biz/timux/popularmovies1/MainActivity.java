@@ -1,6 +1,7 @@
 package com.biz.timux.popularmovies1;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,6 +12,8 @@ import com.biz.timux.popularmovies1.sync.MovieSyncAdapter;
 public class MainActivity extends AppCompatActivity implements MainFragment.Callback {
 
     private boolean mTwoPane;
+    private String mSort;
+    private static final String DETAILFRAGMENT_TAG = "DFTAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
             // adding or replacing the detail fragment using a fragment transaction
             if (savedInstanceState == null) {
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_detail, new DetailFragment())
+                        .replace(R.id.fragment_detail, new DetailFragment(), DETAILFRAGMENT_TAG)
                         .commit();
             }
         } else {
@@ -74,25 +77,41 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
     }
 
     @Override
-    public void onItemSelected(int movieId) {
+    protected void onResume() {
+        super.onResume();
+        String sort = Utility.getPreferredSortBy(this);
+        // update the movie in our second pane using the fragment manager
+        if (sort != null && !sort.equals(mSort)) {
+            MainFragment mf = (MainFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_movie);
+            if ( null != mf ) {
+                mf.onSortPreferenceChanged();
+            }
+            DetailFragment df = (DetailFragment)getSupportFragmentManager().findFragmentByTag(DETAILFRAGMENT_TAG);
+            if ( null != df ) {
+                df.onSortPreferenceChanged(sort);
+            }
+            mSort = sort;
+        }
+    }
 
+    @Override
+    public void onItemSelected(Uri contentUri) {
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle args = new Bundle();
-            args.putInt(DetailActivity.MOVIE_KEY, movieId);
+            args.putParcelable(DetailFragment.DETAIL_URI, contentUri);
 
             DetailFragment fragment = new DetailFragment();
             fragment.setArguments(args);
 
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_detail, fragment)
+                    .replace(R.id.fragment_detail, fragment, DETAILFRAGMENT_TAG)
                     .commit();
         } else {
-
             Intent intent = new Intent(this, DetailActivity.class)
-                    .putExtra(DetailActivity.MOVIE_KEY, movieId);
+                    .setData(contentUri);
             startActivity(intent);
         }
     }

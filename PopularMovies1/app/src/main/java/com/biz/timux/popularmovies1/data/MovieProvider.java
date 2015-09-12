@@ -53,15 +53,15 @@ public class MovieProvider extends ContentProvider {
 
 
     private Cursor getMyFavMovie(Uri uri, String[] projection, String sortOrder) {
-        String movieId = MovieEntry.getMovieIdFromUri(uri);
+        int movieId = MovieEntry.getMovieIdFromUri(uri);
 
 
         String[] selectionArgs = null;
         String selection = null;
 
-        if (movieId != null) {
+        if (movieId != 0) {
             selection = sMovieIdSelection;
-            selectionArgs = new String[] {movieId};
+            selectionArgs = new String[] {Integer.toString(movieId)};
         } else {
 
         }
@@ -108,7 +108,7 @@ public class MovieProvider extends ContentProvider {
         Cursor retCursor;
         //String sortBy = MovieEntry.getSortFromUri(uri);
         String sortBy = Utility.getPreferredSortBy(getContext());
-        String movieId = MovieEntry.getMovieIdFromUri(uri);
+        int movieId = MovieEntry.getMovieIdFromUri(uri);
 
         switch (sUriMatcher.match(uri)) {
 
@@ -118,7 +118,7 @@ public class MovieProvider extends ContentProvider {
                         MovieEntry.TABLE_NAME,
                         projection,
                         sMovieIdSelection,
-                        new String[]{movieId},
+                        new String[]{Integer.toString(movieId)},
                         null,
                         null,
                         sortOrder

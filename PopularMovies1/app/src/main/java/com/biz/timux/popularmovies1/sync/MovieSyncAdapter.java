@@ -40,8 +40,8 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter{
 
     // Interval at which to sync with the weather, in seconds
     // 60 seconds (1min) * 180 = 3 hours
-    public static final int SYNC_INTERVAL = 60 * 180;
-    public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
+    //public static final int SYNC_INTERVAL = 60 * 180;
+    //public static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
 
     public MovieSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -128,7 +128,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter{
                     cVVector.add(movieValues);
         }
 
-
+        Log.d(TAG, "Sync Complete. " + cVVector.size() + " Inserted");
         /** Insert movie data into database */
         insertMovieIntoDatabase(cVVector);
 
@@ -207,7 +207,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter{
 
             moviesJsonStr = buffer.toString();
 
-            Log.d(TAG, "Movies JSON String: " + moviesJsonStr);
+            //Log.d(TAG, "Movies JSON String: " + moviesJsonStr);
 
 
         } catch (IOException e) {

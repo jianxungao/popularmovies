@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.biz.timux.popularmovies1.data.MovieContract;
 import com.biz.timux.popularmovies1.data.MovieContract.MyFavMovieEntry;
 import com.biz.timux.popularmovies1.data.MovieContract.MovieEntry;
 import com.squareup.picasso.Picasso;
@@ -26,8 +27,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
     private final String TAG = DetailFragment.class.getSimpleName();
     public static final String MOVIE_KEY = "movie_id";
-    //private static final String MOVIE_SORT_KEY = "sort";
-    //private String mSort;
+    static final String DETAIL_URI = "URI";
+    private Uri mUri;
+
 
     private static final int DETAIL_LOADER = 0;
 
@@ -57,13 +59,13 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public DetailFragment() {
     }
 
-    public static Fragment newInstance(int movieId) {
+    /*public static Fragment newInstance(int movieId) {
         DetailFragment fragment = new DetailFragment();
         Bundle args = new Bundle();
         args.putInt(MOVIE_KEY, movieId);
         fragment.setArguments(args);
         return fragment;
-    }
+    }*/
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -75,9 +77,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public void onResume() {
         super.onResume();
         Bundle arguments = getArguments();
-        if (arguments != null && arguments.containsKey(DetailActivity.MOVIE_KEY)) {
+        /*if (arguments != null && arguments.containsKey(DetailActivity.MOVIE_KEY)) {
             getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
-        }
+        }*/
     }
 
     @Override
@@ -85,8 +87,17 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                              Bundle savedInstanceState) {
 
         Bundle arguments = getArguments();
-        if (arguments != null) {
+        /*if (arguments != null) {
             mMovieId = arguments.getInt(DetailActivity.MOVIE_KEY);
+        }*/
+
+        if (arguments != null) {
+            mUri = arguments.getParcelable(DetailFragment.DETAIL_URI);
+        }
+
+        if (mUri != null) {
+
+            mMovieId = MovieEntry.getMovieIdFromUri(mUri);
         }
 
         /*if (savedInstanceState != null) {
@@ -97,18 +108,28 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
 
-
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        //getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+        getLoaderManager().initLoader(DETAIL_LOADER, null, this);
         if (savedInstanceState != null) {
             mMovieId = savedInstanceState.getInt(MOVIE_KEY);
         }
         super.onActivityCreated(savedInstanceState);
 
-        Bundle arguments = getArguments();
+        /*Bundle arguments = getArguments();
         if (arguments != null && arguments.containsKey(DetailActivity.MOVIE_KEY)) {
             getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+        }*/
+    }
+
+    void onSortPreferenceChanged( String newSort ) {
+        // replace the uri, since the location has changed
+        Uri uri = mUri;
+        if (null != uri) {
+            int movieId = MovieContract.MovieEntry.getMovieIdFromUri(uri);
+            Uri updatedUri = MovieContract.MovieEntry.buildMovieIdUri(movieId);
+            mUri = updatedUri;
+            getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
         }
     }
 
@@ -120,24 +141,27 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             return null;
         }
         int movieId = intent.getIntExtra(MOVIE_KEY, 0);*/
-        Log.d(TAG, "-- movie id --" + mMovieId);
+        Log.d(TAG, "-- movie id -- " + mMovieId);
+        Log.d(TAG, "-- movie mUir -- " + mUri);
 
 
         //mSort = Utility.getPreferredSortBy(getActivity());
-        Uri movieByIdUri = MovieEntry.buildMovieIdUri(mMovieId);
-        Log.d(TAG, movieByIdUri.toString());
+        //Uri movieByIdUri = MovieEntry.buildMovieIdUri(mMovieId);
+        //Log.d(TAG, movieByIdUri.toString());
 
         // Now create and return a CursorLoader that will take care of
         // creating a Cursor for the data being displayed.
-        return new CursorLoader(
-                getActivity(),
-                movieByIdUri,
-                MOVIE_COLUMNS,
-                null,
-                null,
-                null
-        );
-
+        if ( null != mUri ) {
+            return new CursorLoader(
+                    getActivity(),
+                    mUri,
+                    MOVIE_COLUMNS,
+                    null,
+                    null,
+                    null
+            );
+        }
+        return null;
     }
 
     @Override

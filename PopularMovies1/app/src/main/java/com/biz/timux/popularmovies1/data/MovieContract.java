@@ -68,8 +68,13 @@ public class MovieContract {
                     .appendQueryParameter(COLUMN_SORT, sort).build();
         }
 
-        public static String getMovieIdFromUri(Uri uri) {
-            return uri.getQueryParameter(COLUMN_MOVIE_ID);
+        public static int getMovieIdFromUri(Uri uri) {
+
+            String movieId = uri.getQueryParameter(COLUMN_MOVIE_ID);
+            if (movieId != null && movieId.length() > 0)
+                return Integer.parseInt(movieId);
+            else
+                return 0;
         }
 
         public static String getSortFromUri(Uri uri) {
