@@ -110,6 +110,11 @@ public class MovieContract {
         public static Uri buildMyFavMovieUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
+        public static Uri buildMyFavMovieIdUri(int movieId) {
+            return CONTENT_URI.buildUpon()
+                    .appendQueryParameter(COLUMN_MOVIE_ID, String.valueOf(movieId)).build();
+        }
     }
 
 

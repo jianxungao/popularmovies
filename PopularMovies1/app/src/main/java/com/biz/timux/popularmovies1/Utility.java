@@ -12,6 +12,9 @@ import android.support.v4.app.FragmentActivity;
 public class Utility {
 
     public static final String sBaseUrl = "https://image.tmdb.org/t/p/w185";
+    public static final String sBaseDiscoverUrl ="http://api.themoviedb.org/3/discover/movie?";
+    public static final String sBaseMovieUrl = "http://api.themoviedb.org/3/movie/";
+    public static final String sAPIKey = "5f781f14a22dd8dc12423a79603e3e1f";
 
     public static String getYear(String releaseDate){
         String year = "2015";

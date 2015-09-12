@@ -1,7 +1,9 @@
 package com.biz.timux.popularmovies1;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -12,12 +14,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.biz.timux.popularmovies1.data.MovieContract;
 import com.biz.timux.popularmovies1.data.MovieContract.MyFavMovieEntry;
 import com.biz.timux.popularmovies1.data.MovieContract.MovieEntry;
+import com.biz.timux.popularmovies1.data.MovieDbHelper;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -29,6 +34,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     public static final String MOVIE_KEY = "movie_id";
     static final String DETAIL_URI = "URI";
     private Uri mUri;
+
+    private Button mPlayTrailerButton;
+    private Button mSaveFavoriteButton;
 
 
     private static final int DETAIL_LOADER = 0;
@@ -44,7 +52,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             MovieEntry.COLUMN_MOVIE_VOTE,
             MovieEntry.COLUMN_MOVIE_BACKDROP_PATH,
             MovieEntry.COLUMN_MOVIE_POSTER_PATH,
-            MovieEntry.COLUMN_MOVIE_VOTE
+            MovieEntry.COLUMN_MOVIE_VOTE,
+            MovieEntry.COLUMN_MOVIE_HAS_VIDEO,
+            // This works because the WeatherProvider returns location data joined with
+            // weather data, even though they're stored in two different tables.
+            //MyFavMovieEntry.COLUMN_MOVIE_ID,
     };
 
     public static final int COL_MOVIE_ID = 0;
@@ -126,8 +138,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         // replace the uri, since the location has changed
         Uri uri = mUri;
         if (null != uri) {
-            int movieId = MovieContract.MovieEntry.getMovieIdFromUri(uri);
-            Uri updatedUri = MovieContract.MovieEntry.buildMovieIdUri(movieId);
+            int movieId = MovieEntry.getMovieIdFromUri(uri);
+            Uri updatedUri = MovieEntry.buildMovieIdUri(movieId);
             mUri = updatedUri;
             getLoaderManager().restartLoader(DETAIL_LOADER, null, this);
         }
@@ -172,6 +184,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
             while (data.moveToNext()) {
                 int moiveId = data.getInt(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_ID));
+                // 0:false, 1:true
+                int hasTrailer = data.getInt(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_HAS_VIDEO));
 
                 if (mMovieId == moiveId) {
 
@@ -209,11 +223,84 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                     Log.d(TAG, "Picasso load() is called :" + Utility.sBaseUrl + icons);
 
 
-                    Log.d(TAG, "Movie:  - " + movieTitle + " -  " + movieYear + " - ");
+                    Log.d(TAG, "Movie:  - " + movieTitle + " -  " + movieYear + " - " + hasTrailer);
+
+                    mSaveFavoriteButton = (Button) getView().findViewById(R.id.btn_save_favorite);
+                    mSaveFavoriteButton.setOnClickListener(new View.OnClickListener(){
+                        @Override
+                        public void onClick(View v){
+                            if (mMovieId != 0){
+
+                                if (saveFavoriteMovie(mMovieId)) {
+
+                                    Toast.makeText(getContext(), R.string.message_ok, Toast.LENGTH_SHORT).show();
+                                } else {
+
+                                    Toast.makeText(getContext(), R.string.message_already_saved, Toast.LENGTH_SHORT).show();
+                                }
+
+                            } else {
+
+                                Toast.makeText(getContext(), R.string.message_not_ok, Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+
+                    if (hasTrailer == 1) {
+
+                        ((TextView) getView().findViewById(R.id.movie_trailer_txt))
+                                .setVisibility(View.VISIBLE);
+                        ((Button) getView().findViewById(R.id.btn_play_trailer))
+                                .setVisibility(View.VISIBLE);
+
+
+                        /*try{
+
+                        }*/
+                    }
+
                     break;
                 }
             }
         }
+    }
+
+    private boolean saveFavoriteMovie(int movieId){
+
+        MovieDbHelper dbHelper = new MovieDbHelper(getContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        Uri movieFavUri = MyFavMovieEntry.buildMyFavMovieIdUri(movieId);
+        Cursor myFavMovieCursor = getActivity().getContentResolver().query(
+                movieFavUri,
+                null,
+                null,
+                null,
+                null
+        );
+
+        if (myFavMovieCursor != null && myFavMovieCursor.moveToFirst()) {
+
+            while (myFavMovieCursor.moveToNext()) {
+
+                int mvId = myFavMovieCursor.getInt(myFavMovieCursor
+                        .getColumnIndex(MyFavMovieEntry.COLUMN_MOVIE_ID));
+                Log.d(TAG, "--- movie id in cursor ---" + mvId);
+                if (mvId == movieId){
+                    return false;
+                }
+            }
+        }
+
+        myFavMovieCursor.close();
+        ContentValues values = new ContentValues();
+        values.put(MyFavMovieEntry.COLUMN_MOVIE_ID, movieId);
+        long aRowId;
+        aRowId = db.insert(MyFavMovieEntry.TABLE_NAME, null, values);
+
+        Log.d(TAG, "New row id: " + aRowId);
+
+        return true;
     }
 
     @Override

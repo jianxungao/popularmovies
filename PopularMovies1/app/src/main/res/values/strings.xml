@@ -5,6 +5,11 @@
     <string name="title_activity_detail">MovieDetail</string>
     <string name="fav_button_text">MARK AS FAVORITE</string>
     <string name="action_refresh">Refresh</string>
+    <string name="trailers_text">Trailers:</string>
+    <string name="trailers_play_text">Trailer 1</string>
+    <string name="message_ok">Movie Saved!</string>
+    <string name="message_not_ok">Please select a movie!</string>
+    <string name="message_already_saved">It already in your favorite list!</string>
 
     <!-- Label for sort order preference -->
     <string name="pref_sort_by_label">Please chose your favorite sorting</string>

@@ -158,12 +158,11 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter{
 
         String format = "json";
 
-        String keyValue = "5f781f14a22dd8dc12423a79603e3e1f";
+        String keyValue = Utility.sAPIKey;
 
         try {
 
-            final String BASE_URL =
-                    "http://api.themoviedb.org/3/discover/movie?";
+            final String BASE_URL = Utility.sBaseDiscoverUrl;
             final String SORT_BY = "sort_by";
             final String API_KEY = "api_key";
 

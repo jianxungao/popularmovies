@@ -52,14 +52,14 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
             MovieEntry.TABLE_NAME + "." + MovieEntry._ID,
             MovieEntry.COLUMN_MOVIE_ID,
-            MovieEntry.COLUMN_MOVIE_TITLE,
-            MovieEntry.COLUMN_MOVIE_RELEASE_DATE,
-            MovieEntry.COLUMN_MOVIE_DESC,
-            MovieEntry.COLUMN_MOVIE_POPULARITY,
-            MovieEntry.COLUMN_MOVIE_VOTE,
-            MovieEntry.COLUMN_MOVIE_BACKDROP_PATH,
+            //MovieEntry.COLUMN_MOVIE_TITLE,
+            //MovieEntry.COLUMN_MOVIE_RELEASE_DATE,
+            //MovieEntry.COLUMN_MOVIE_DESC,
+            //MovieEntry.COLUMN_MOVIE_POPULARITY,
+            //MovieEntry.COLUMN_MOVIE_VOTE,
+            //MovieEntry.COLUMN_MOVIE_BACKDROP_PATH,
             MovieEntry.COLUMN_MOVIE_POSTER_PATH,
-            MovieEntry.COLUMN_MOVIE_VOTE
+            //MovieEntry.COLUMN_MOVIE_VOTE
     };
 
 
@@ -67,11 +67,12 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     // must change.
     public static final int COL_MOVIE_ID = 1;
     //public static final int COL_MOVIE_TITLE = 1;
-    public static final int COL_MOVIE_DESC = 2;
-    public static final int COL_MOVIE_RELEASE_DATE = 6;
-    public static final int COL_MOVIE_POSTER_PATH = 5;
-    public static final int COL_MOVIE_VOTE_AVG = 8;
-    public static final int COL_MOVIE_POP = 7;
+    //public static final int COL_MOVIE_DESC = 2;
+    //public static final int COL_MOVIE_RELEASE_DATE = 6;
+    //public static final int COL_MOVIE_POSTER_PATH = 5;
+    public static final int COL_MOVIE_POSTER_PATH = 2;
+    //public static final int COL_MOVIE_VOTE_AVG = 8;
+    //public static final int COL_MOVIE_POP = 7;
 
 
 
@@ -185,8 +186,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         getLoaderManager().restartLoader(MOVIE_LOADER, null, this);
     }
 
-
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
@@ -197,14 +196,13 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         Uri movieSortedByUri = MovieEntry.buildMovieListSortedByPreferenceUri(mSort);
         return new CursorLoader(
                 getActivity(),
-                MovieEntry.CONTENT_URI,
-                null,
+                //MovieEntry.CONTENT_URI,
+                movieSortedByUri,
+                MOVIE_COLUMNS,
                 null,
                 null,
                 null
         );
-
-
     }
 
     @Override
