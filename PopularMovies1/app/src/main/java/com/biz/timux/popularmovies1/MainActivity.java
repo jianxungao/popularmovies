@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
 
     private boolean mTwoPane;
     private String mSort;
-    private static final String DETAILFRAGMENT_TAG = "DFTAG";
+    private static final String DETAILFRAGMENT_TAG = "DF_TAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,14 +42,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
 
     }
 
-    // Called after onCreate has finished, use to restore UI state
+
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        // Restore UI state from the savedInstanceState.
-        // This bundle has also been passed to onCreate.
-        // Will only be called if the Activity has been
-        // killed by the system since it was last visible.
     }
 
 
@@ -80,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.Call
     protected void onResume() {
         super.onResume();
         String sort = Utility.getPreferredSortBy(this);
-        // update the movie in our second pane using the fragment manager
+        // update the movie in the second pane using the fragment manager
         if (sort != null && !sort.equals(mSort)) {
             MainFragment mf = (MainFragment)getSupportFragmentManager().findFragmentById(R.id.fragment_movie);
             if ( null != mf ) {

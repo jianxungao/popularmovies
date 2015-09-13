@@ -107,7 +107,7 @@ public class TestProvider extends AndroidTestCase {
         assertEquals(MovieEntry.CONTENT_TYPE, type);
 
         int testMovieId = 76341;
-        // content://com.biz.timux.popularmovies1/movie/76431
+        // content://com.biz.timux.popularmovies1/movie
         type = mContext.getContentResolver().getType(
                 MovieEntry.buildMovieIdUri(testMovieId));
         // vnd.android.cursor.item/com.biz.timux.popularmovies1/movie

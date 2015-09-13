@@ -180,7 +180,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         super.onStart();
     }
 
-    // since we read the sort pref when we create the loader, all we need to do is restart things
+    // since the sort pref is read when the loader is created, restarting things are needed
     void onSortPreferenceChanged() {
         updateMovieList();
         getLoaderManager().restartLoader(MOVIE_LOADER, null, this);

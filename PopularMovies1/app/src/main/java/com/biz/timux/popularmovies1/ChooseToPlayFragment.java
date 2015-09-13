@@ -103,8 +103,11 @@ public class ChooseToPlayFragment extends DialogFragment {
     }
 
     private void openYouTubeToView(int movieId){
-
-        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=cxLG2wtE7TM"));
+        // if more info provided, the precise url will be parsed
+        // now it only hard coded with it below;
+        // https://www.youtube.com/watch?v=Io6hPdC41RM
+        Intent i = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("https://www.youtube.com/watch?v=Io6hPdC41RM"));
 
         startActivity(i);
 
