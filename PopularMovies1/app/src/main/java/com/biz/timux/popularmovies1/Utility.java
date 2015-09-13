@@ -18,7 +18,7 @@ public class Utility {
     public static final String sAuthority = "api.themoviedb.org";
     public static final String sKey = "3";
     public static final String sCategory = "movie";
-    public static final String sAPIKey = "5f781f14a22dd8dc12423a79603e3e1f";
+    public static final String sAPIKey = "";
 
     public static String getYear(String releaseDate){
         String year = "2015";
