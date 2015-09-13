@@ -174,7 +174,7 @@ public class MovieSyncAdapter extends AbstractThreadedSyncAdapter{
 
             URL url = new URL(builtUri.toString());
 
-            Log.d(TAG, "Built URI " + builtUri.toString());
+            Log.d(TAG, "Built URL " + builtUri.toString());
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();

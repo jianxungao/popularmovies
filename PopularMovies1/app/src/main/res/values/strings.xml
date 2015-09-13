@@ -33,6 +33,9 @@
     <!-- SyncAdapter related -->
     <string name="sync_account_type">timux.bix.com</string>
     <string name="content_authority">com.biz.timux.popularmovies1</string>
+    <string name="dialog_txt_browser">Browser</string>
+    <string name="dialog_txt_yourtube">YourTube</string>
+    <string name="dialog_for_choosing">Please choose to play</string>
 
 
 </resources>

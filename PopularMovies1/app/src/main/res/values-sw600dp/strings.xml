@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dialog_txt_browser">Browser</string>
+    <string name="dialog_txt_youtube">YouTube</string>
+    <string name="dialog_for_choosing">Please choose to play</string>
+</resources>

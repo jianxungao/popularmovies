@@ -2,11 +2,14 @@ package com.biz.timux.popularmovies1;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -24,6 +27,8 @@ import com.biz.timux.popularmovies1.data.MovieContract.MyFavMovieEntry;
 import com.biz.timux.popularmovies1.data.MovieContract.MovieEntry;
 import com.biz.timux.popularmovies1.data.MovieDbHelper;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -183,7 +188,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
         if (data != null && data.moveToFirst()) {
 
             while (data.moveToNext()) {
-                int moiveId = data.getInt(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_ID));
+                final int moiveId = data.getInt(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_ID));
                 // 0:false, 1:true
                 int hasTrailer = data.getInt(data.getColumnIndex(MovieEntry.COLUMN_MOVIE_HAS_VIDEO));
 
@@ -220,7 +225,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
                     ImageView iconView = (ImageView) getView().findViewById(R.id.movie_imgIcon);
                     Picasso.with(getContext()).load(Utility.sBaseUrl + icons).into(iconView);
-                    Log.d(TAG, "Picasso load() is called :" + Utility.sBaseUrl + icons);
+                    //Log.d(TAG, "Picasso load() is called :" + Utility.sBaseUrl + icons);
 
 
                     Log.d(TAG, "Movie:  - " + movieTitle + " -  " + movieYear + " - " + hasTrailer);
@@ -245,13 +250,25 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
                             }
                         }
                     });
-
-                    if (hasTrailer == 1) {
+                    // if the previous request indicating that this movie has video,
+                    // then set trailer play is visible.
+                    if (hasTrailer == 0) {
 
                         ((TextView) getView().findViewById(R.id.movie_trailer_txt))
                                 .setVisibility(View.VISIBLE);
-                        ((Button) getView().findViewById(R.id.btn_play_trailer))
-                                .setVisibility(View.VISIBLE);
+                        mPlayTrailerButton =((Button) getView().findViewById(R.id.btn_play_trailer));
+                        mPlayTrailerButton.setVisibility(View.VISIBLE);
+                        mPlayTrailerButton.setOnClickListener(new View.OnClickListener(){
+                            @Override
+                            public void onClick(View v){
+                                //openBrowserToView(moiveId);
+                                //openYourTubeToView(moiveId);
+                                FragmentManager fm = getActivity()
+                                        .getSupportFragmentManager();
+                                ChooseToPlayFragment dialog = ChooseToPlayFragment.newInstance(moiveId);
+                                dialog.show(fm,TAG);
+                            }
+                        });
 
 
                         /*try{
@@ -302,6 +319,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         return true;
     }
+
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) { }
